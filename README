@@ -1,0 +1,113 @@
+-------------------------------------------------
+ 	 BEC Spindown Example Case
+
+Daniel Dauhajre, Pierre Damien, Jeroen Molemaker
+UCLA Sept 2023
+
+------------------------------------------------
+
+This example case sets up a doubly periodic, flat bottom domain
+and constitutes a 1-D (in z) BEC (bgc) spindown problem. 
+
+It can be run
+locally on a small grid. For testing/code development, it can be useful to still partition into subdomains and use different LLm, MMm (see param.opt) for testing purposes 
+
+---------------------------------------------------------------------------------------------
+					SETUP DESCRIPTION
+
+The ROMS initial condition comprises const. temperature with no flow. 
+The physics is not forced and no ROMS variables should change from their 
+initial condition (which are all 0 apart from T,S)
+
+The BEC initial condition prescribes an analytical shape function (in z) to all BEC nutrients.
+The user prescribes the min/max of this nutrient profiles and there is a paramter (gamma) that sets
+whether the nutrient profile is a minimum (gamma=1) or maximum (gamma=-1) at the surface and vice versa at the bottom. This recipe is defined below
+
+All plankton tracers are set to 1e-6 in the surface layer to provide some small seed to initiate growth.
+
+The bgc is forced by `turning on the light' in BEC (without the real radiative forcing on the physics) with a constant PAR and constant dust, iron, and atmospheric pCO2.  These are set in bgc.opt (at the top) 
+---------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------
+			  	SPECIFIC CPPS CREATED FOR THIS SETUP 
+				i.e., these are not standard in the ROMS repo
+
+ANA_BEC_INI --> for initializing tracer min/max in tracers.F, tracers.opt
+ANA_BEC_FRC --> for setting constant dust, iron, and pco2air
+ANA_PAR     --> for setting constant swrad0 (which is converted to PAR) 
+
+---------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------
+				INITIAL CONDITION RECIPE
+See ana_init.h for the code
+
+-----------------------
+ROMS initial conditions
+------------------------
+        --> u,v,ubar,vbar,zeta=0
+	--> right now, the temp is initialized to a const (15 degC)
+	---> you can change this recipe in ana_init.h
+	
+----------------------
+BGC Initial conditions
+---------------------
+The BEC tracers are initialized as:
+
+trc(z) = t_min + (t_max - t_min) * F(z)
+where
+F(z) = 0.5 * (1 + gamma * tan(alpha * (z + h_sbl)))
+
+This basically sets a transition in the surface layer (z>-h_sbl) for t_min or t_max to
+t_max or t_min
+
+If gamma=1, this prescribes a min at the surface
+If gamma=-1, this prescribes the max at the surface
+
+t_min, t_max, and gamma are all set in tracers.opt as:
+t_anamin
+t_anamax
+t_anagamma 
+** The presently coded values for min/max are taken from eyeballing SoCal ROMS-BEC solns ** 
+
+h_sbl is set in ana_init.h
+---------------------------------------------------------------------------------------------
+
+
+
+
+---------------------------------------------------------------------------------------------
+				WHAT TO EDIT TO CHANGE THE SETUP
+
+- bgc.opt    --> sets constant bgc forcing (swrad0, dust0,iron0,pco20)
+- ana_grid.h --> grid setup (grid dimensions, f, depth)
+- ana_init.h --> initial condition setup, including BEC tracers
+- tracers.opt --> declares all bec tracer min/max values that are used in ana_int.h
+			--> look for t_anamin, t_anamax (declared in tracers.F with ANA_BEC_INI CPP)
+			--> a bit of a cumbersome way to do it now, but its easy to go trc by trc 
+
+- water depth (HD[m]) is set in param.opt (for now) --> but there is a weird issue with h allocation in grid.F right now
+
+
+Apart from that, 
+edit param.opt in the usual way (cppdefs.opt should be untouched to keep this setup as is)
+---------------------------------------------------------------------------------------------
+
+
+
+---------------------------------------------------------------------------------------------
+				INTERNAL UCLA NOTES
+
+- analytical.F changed in this directory relative to repo as of sept. 2023
+	--> had to follow what is in Filament example and remove istr,iend,jstr,jend from
+	    ana_vmix calls and comment out exchange_tile calls (also deleted cubic profile code, which should
+	    be removed from the repo /src/)
+
+- grid.F 
+    --> the compiler was complaining about setting h(i,j)=HD in ana_grid.h, so
+	I just manually set h=HD in grid.F as a temporary work-around'
+    --> there seems to be some Heisenbug allocation issue related to this and there is 
+        a shameful hardcode workaround for now 
+---------------------------------------------------------------------------------------------
+
+	
