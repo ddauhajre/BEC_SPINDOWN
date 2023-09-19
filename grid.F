@@ -120,12 +120,7 @@
       allocate( hinv(GLOBAL_2D_ARRAY) ) ; hinv=init        ! before only rmask was set in init_arrays...
       allocate( f(GLOBAL_2D_ARRAY) )    ; f=init
       allocate( fomn(GLOBAL_2D_ARRAY) ) ; fomn=init
-      !Daniel changed this to allocate h here and hardcode HD
-      ! compilier complains when trying to set h in ana_grid.h
-      ! and if this line is called at top of this block, h never gets
-      ! allocated (known); this is checked by printing h(1,) in 
-      ! the ana_grd call
-      allocate( h(GLOBAL_2D_ARRAY) )    ; h=HD!init           ! potential first touch issue.
+      allocate( h(GLOBAL_2D_ARRAY) )    ; h=init           ! potential first touch issue.
  
 # ifdef NON_TRADITIONAL
       allocate( f_XI(GLOBAL_2D_ARRAY) )  ; f_XI=init

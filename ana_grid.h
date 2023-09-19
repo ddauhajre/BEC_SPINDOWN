@@ -1,7 +1,7 @@
 
 
       real    :: SizeX,SizeY
-      real    :: f0,beta,H
+      real    :: f0,beta,HD
       real    :: x0,y0,dx,dy
       integer :: i,j
       
@@ -17,7 +17,7 @@
       beta=0
       
       !Depth [m]
-      H=1000
+      HD=1000
 
       dx = SizeX/gnx   !! grid size in x-direction
       dy = SizeY/gny
@@ -51,11 +51,11 @@
         enddo
       enddo
 
-      !do j=-1,ny+2
-      !  do i=-1,nx+2
-      !    h(i,j)=HD
-      !  enddo
-      !enddo
+      do j=-1,ny+2
+        do i=-1,nx+2
+          h(i,j)=HD
+        enddo
+      enddo
 
 # ifdef MASKING
       do j=-1,ny+2

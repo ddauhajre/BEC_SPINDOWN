@@ -86,9 +86,6 @@ h_sbl is set in ana_init.h
 			--> look for t_anamin, t_anamax (declared in tracers.F with ANA_BEC_INI CPP)
 			--> a bit of a cumbersome way to do it now, but its easy to go trc by trc 
 
-- water depth (HD[m]) is set in param.opt (for now) --> but there is a weird issue with h allocation in grid.F right now
-
-
 Apart from that, 
 edit param.opt in the usual way (cppdefs.opt should be untouched to keep this setup as is)
 ---------------------------------------------------------------------------------------------
@@ -102,12 +99,6 @@ edit param.opt in the usual way (cppdefs.opt should be untouched to keep this se
 	--> had to follow what is in Filament example and remove istr,iend,jstr,jend from
 	    ana_vmix calls and comment out exchange_tile calls (also deleted cubic profile code, which should
 	    be removed from the repo /src/)
-
-- grid.F 
-    --> the compiler was complaining about setting h(i,j)=HD in ana_grid.h, so
-	I just manually set h=HD in grid.F as a temporary work-around'
-    --> there seems to be some Heisenbug allocation issue related to this and there is 
-        a shameful hardcode workaround for now 
----------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
 
 	

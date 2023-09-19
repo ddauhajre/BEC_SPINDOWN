@@ -14,11 +14,7 @@
 ! Number of tracers
 !------- -----------
 ! nt  must be 2 or more if Salinity is defined
-
-      ! Flat bottom depth [m]  --> just for analytical setup, not a part of standard param.opt
-      real, parameter :: HD=1500
-
-                       
+                      
       ! Grid dimensions and subdomains 
       integer, parameter :: LLm=16, MMm=8, N=64    ! Idealized grid (diff xi and eta size on purpose) 
 
