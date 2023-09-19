@@ -56,7 +56,7 @@ The BEC tracers are initialized as:
 
 trc(z) = t_min + (t_max - t_min) * F(z)
 where
-F(z) = 0.5 * (1 + gamma * tan(alpha * (z + h_sbl)))
+F(z) = 0.5 * (1 + gamma * tanh(alpha * (z + h_sbl)))
 
 This basically sets a transition in the surface layer (z>-h_sbl) for t_min or t_max to
 t_max or t_min
